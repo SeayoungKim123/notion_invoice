@@ -1,0 +1,39 @@
+{
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "$raw = [Console]::In.ReadToEnd(); try { $j = $raw | ConvertFrom-Json; $msg = if ($j.message) { $j.message } else { 'Claude 알림' } } catch { $msg = 'Claude 알림' }; $proj = Split-Path -Leaf (Get-Location); $text = \"*[Claude]*`n• 📁 $proj`n• 🔔 권한 요청\"; $payload = @{text=$text} | ConvertTo-Json -Compress; $body = [System.Text.Encoding]::UTF8.GetBytes($payload); Invoke-RestMethod -Uri $env:SLACK_WEBHOOK_URL -Method Post -ContentType 'application/json; charset=utf-8' -Body $body | Out-Null"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "$proj = Split-Path -Leaf (Get-Location); $msg = \"*[Claude]*\\n• 📁 $proj\\n• ✅ 작업 완료\"; $body = [System.Text.Encoding]::UTF8.GetBytes(\"{`\"text`\":`\"$msg`\"}\"); Invoke-RestMethod -Uri $env:SLACK_WEBHOOK_URL -Method Post -ContentType 'application/json; charset=utf-8' -Body $body | Out-Null",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; npx prettier --write \"$f\" --ignore-unknown; } 2>/dev/null || true",
+            "statusMessage": "Prettier 포맷팅 중..."
+          }
+        ]
+      }
+    ]
+  }
+}

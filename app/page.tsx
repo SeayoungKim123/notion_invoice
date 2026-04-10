@@ -1,14 +1,60 @@
-export default function Home() {
+import { getBooks } from "@/lib/notion";
+import type { Book } from "@/lib/notion";
+import BookList from "@/components/BookList";
+
+export const revalidate = 3600;
+
+export default async function Home() {
+  let books: Book[] = [];
+
+  try {
+    books = await getBooks();
+  } catch {
+    // Notion API 연결 실패 시 빈 목록으로 폴백
+  }
+
+  const currentYear = new Date().getFullYear();
+  const totalCount = books.length;
+  const thisYearCount = books.filter((book) =>
+    book.readDate?.startsWith(String(currentYear)),
+  ).length;
+
   return (
-    <main className="bg-background min-h-screen px-4 py-16">
+    <main className="bg-background min-h-screen px-4 py-10 sm:py-16">
       <div className="mx-auto max-w-5xl">
-        <div className="mb-12 text-center">
-          <h1 className="text-foreground mb-3 text-4xl font-bold tracking-tight">
+        {/* Header */}
+        <div className="mb-8 text-center sm:mb-10">
+          <h1 className="text-foreground mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
             Book Shelf
           </h1>
-          <p className="text-muted-foreground text-lg">읽은 책을 소개합니다.</p>
+          <p className="text-muted-foreground text-base sm:text-lg">
+            읽은 책을 소개합니다.
+          </p>
         </div>
-        {/* TODO: 책 목록 카드 그리드 */}
+
+        {/* Stats Bar */}
+        <div className="mb-8 flex justify-center gap-6 sm:mb-10 sm:gap-8">
+          <div className="text-center">
+            <p className="text-foreground text-2xl font-bold sm:text-3xl">
+              {totalCount}
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
+              총 읽은 책
+            </p>
+          </div>
+          <div className="bg-border w-px" />
+          <div className="text-center">
+            <p className="text-foreground text-2xl font-bold sm:text-3xl">
+              {thisYearCount}
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
+              올해 읽은 책
+            </p>
+          </div>
+        </div>
+
+        {/* Book List with Category Filter */}
+        <BookList books={books} />
       </div>
     </main>
   );

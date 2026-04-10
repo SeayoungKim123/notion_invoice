@@ -1,9 +1,14 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { getBookById } from "@/lib/notion";
+import { getBooks, getBookById } from "@/lib/notion";
 
 export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const books = await getBooks();
+  return books.map((book) => ({ id: book.id }));
+}
 
 function StarRating({ rating }: { rating: string }) {
   const match = rating.match(/(\d)/);
@@ -53,22 +58,14 @@ export default async function BookDetailPage({
       <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:gap-8">
         {/* 표지 이미지 */}
         <div className="bg-muted relative mx-auto h-56 w-40 shrink-0 overflow-hidden rounded-lg shadow-md sm:mx-0 sm:h-64 sm:w-44">
-          {book.coverUrl ? (
-            <Image
-              src={book.coverUrl}
-              alt={`${book.title} 표지`}
-              fill
-              sizes="(max-width: 640px) 160px, 176px"
-              className="object-cover"
-              priority
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <span className="text-muted-foreground text-5xl select-none">
-                📚
-              </span>
-            </div>
-          )}
+          <Image
+            src={book.coverUrl || "/book-placeholder.svg"}
+            alt={`${book.title} 표지`}
+            fill
+            sizes="(max-width: 640px) 160px, 176px"
+            className="object-cover"
+            priority
+          />
         </div>
 
         {/* 책 정보 */}

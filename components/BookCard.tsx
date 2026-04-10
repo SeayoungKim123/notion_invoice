@@ -31,21 +31,13 @@ export default function BookCard({ book }: { book: Book }) {
       <div className="bg-card border-border overflow-hidden rounded-lg border transition-shadow hover:shadow-md">
         {/* 표지 이미지 */}
         <div className="bg-muted relative aspect-[2/3] w-full">
-          {book.coverUrl ? (
-            <Image
-              src={book.coverUrl}
-              alt={`${book.title} 표지`}
-              fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-              className="object-cover transition-transform group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <span className="text-muted-foreground text-4xl select-none">
-                📚
-              </span>
-            </div>
-          )}
+          <Image
+            src={book.coverUrl || "/book-placeholder.svg"}
+            alt={`${book.title} 표지`}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            className="object-cover transition-transform group-hover:scale-105"
+          />
         </div>
 
         {/* 책 정보 */}

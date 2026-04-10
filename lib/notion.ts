@@ -2,7 +2,7 @@ import { Client, isFullPage } from "@notionhq/client";
 import type { PageObjectResponse } from "@notionhq/client";
 
 export const NOTION_FIELDS = {
-  TITLE: "제목",
+  TITLE: "Name",
   AUTHOR: "저자",
   COVER_URL: "표지이미지",
   RATING: "별점",
@@ -52,8 +52,16 @@ function pageToBook(page: PageObjectResponse): Book {
   const coverProp = props[NOTION_FIELDS.COVER_URL];
   let coverUrl = "";
   if (coverProp?.type === "files" && coverProp.files.length > 0) {
-    const file = coverProp.files[0];
-    coverUrl = file.type === "external" ? file.external.url : file.file.url;
+    const realFile = coverProp.files.find((f) => {
+      const url = f.type === "external" ? f.external.url : f.file.url;
+      return !url.includes("covers.openlibrary.org");
+    });
+    if (realFile) {
+      coverUrl =
+        realFile.type === "external"
+          ? realFile.external.url
+          : realFile.file.url;
+    }
   }
 
   const ratingProp = props[NOTION_FIELDS.RATING];

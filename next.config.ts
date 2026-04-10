@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "on" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
@@ -13,10 +15,12 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      isDev
+        ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+        : "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://covers.openlibrary.org",
+      "img-src 'self' data: blob: https://covers.openlibrary.org https://contents.kyobobook.co.kr",
       "connect-src 'self'",
       "frame-ancestors 'none'",
     ].join("; "),
@@ -30,6 +34,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "covers.openlibrary.org",
+      },
+      {
+        protocol: "https",
+        hostname: "contents.kyobobook.co.kr",
       },
     ],
   },

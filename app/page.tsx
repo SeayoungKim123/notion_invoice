@@ -1,6 +1,7 @@
 import { getBooks } from "@/lib/notion";
 import type { Book } from "@/lib/notion";
 import BookList from "@/components/BookList";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export const revalidate = 3600;
 
@@ -9,8 +10,8 @@ export default async function Home() {
 
   try {
     books = await getBooks();
-  } catch {
-    // Notion API 연결 실패 시 빈 목록으로 폴백
+  } catch (error) {
+    console.error("[Notion API Error]", error);
   }
 
   const currentYear = new Date().getFullYear();
@@ -23,13 +24,18 @@ export default async function Home() {
     <main className="bg-background min-h-screen px-4 py-10 sm:py-16">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
-        <div className="mb-8 text-center sm:mb-10">
-          <h1 className="text-foreground mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
-            Book Shelf
-          </h1>
-          <p className="text-muted-foreground text-base sm:text-lg">
-            읽은 책을 소개합니다.
-          </p>
+        <div className="mb-8 sm:mb-10">
+          <div className="flex justify-end">
+            <ThemeToggle />
+          </div>
+          <div className="text-center">
+            <h1 className="text-foreground mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
+              Book Shelf
+            </h1>
+            <p className="text-muted-foreground text-base sm:text-lg">
+              읽은 책을 소개합니다.
+            </p>
+          </div>
         </div>
 
         {/* Stats Bar */}

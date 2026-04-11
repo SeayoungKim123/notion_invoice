@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
-const isDev = process.env.NODE_ENV === "development";
-
+// Content-Security-Policy는 middleware.ts에서 nonce 기반으로 동적 생성
 const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "on" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
@@ -12,18 +11,8 @@ const securityHeaders = [
     value: "camera=(), microphone=(), geolocation=()",
   },
   {
-    key: "Content-Security-Policy",
-    value: [
-      "default-src 'self'",
-      isDev
-        ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
-        : "script-src 'self' 'unsafe-inline'",
-      "style-src 'self' 'unsafe-inline'",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://covers.openlibrary.org https://contents.kyobobook.co.kr https://prod-files-secure.s3.us-west-2.amazonaws.com https://*.amazonaws.com",
-      "connect-src 'self'",
-      "frame-ancestors 'none'",
-    ].join("; "),
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
   },
 ];
 

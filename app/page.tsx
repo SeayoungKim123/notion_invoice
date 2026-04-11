@@ -12,7 +12,10 @@ export default async function Home() {
   try {
     books = await getBooks();
   } catch (error) {
-    console.error("[Notion API Error]", error);
+    console.error(
+      "[Notion API Error]",
+      error instanceof Error ? error.message : "Unknown error",
+    );
   }
 
   const currentYear = new Date().getFullYear();

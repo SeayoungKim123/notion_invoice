@@ -32,7 +32,17 @@ export type Book = {
   purchaseLink?: string;
 };
 
-const notion = new Client({ auth: process.env.NOTION_API_KEY });
+if (!process.env.NOTION_API_KEY) {
+  throw new Error("환경변수 NOTION_API_KEY가 설정되지 않았습니다.");
+}
+if (!process.env.NOTION_DATABASE_ID) {
+  throw new Error("환경변수 NOTION_DATABASE_ID가 설정되지 않았습니다.");
+}
+
+const NOTION_API_KEY = process.env.NOTION_API_KEY as string;
+const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID as string;
+
+const notion = new Client({ auth: NOTION_API_KEY });
 
 function pageToBook(page: PageObjectResponse): Book {
   const props = page.properties;
@@ -118,7 +128,7 @@ export async function getBookById(id: string): Promise<Book | null> {
 
 export async function getBooks(): Promise<Book[]> {
   const response = await notion.dataSources.query({
-    data_source_id: process.env.NOTION_DATABASE_ID!,
+    data_source_id: NOTION_DATABASE_ID,
     filter: {
       property: NOTION_FIELDS.STATUS,
       select: { equals: STATUS_VALUES.COMPLETED },

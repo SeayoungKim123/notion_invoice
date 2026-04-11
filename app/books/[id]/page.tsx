@@ -10,6 +10,10 @@ export async function generateStaticParams() {
   return books.map((book) => ({ id: book.id }));
 }
 
+function isSafeUrl(url: string): boolean {
+  return /^https?:\/\//i.test(url);
+}
+
 function StarRating({ rating }: { rating: string }) {
   const match = rating.match(/(\d)/);
   const score = match ? parseInt(match[1], 10) : 0;
@@ -108,7 +112,7 @@ export default async function BookDetailPage({
           )}
 
           {/* 구매 링크 */}
-          {book.purchaseLink && (
+          {book.purchaseLink && isSafeUrl(book.purchaseLink) && (
             <a
               href={book.purchaseLink}
               target="_blank"

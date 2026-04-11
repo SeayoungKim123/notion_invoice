@@ -1,34 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Book } from "@/lib/notion";
-
-function StarRating({ rating }: { rating: string }) {
-  // rating 형식: "★1" ~ "★5" 또는 빈 문자열
-  const match = rating.match(/(\d)/);
-  const score = match ? parseInt(match[1], 10) : 0;
-
-  if (score === 0) return null;
-
-  return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: 5 }, (_, i) => (
-        <span
-          key={i}
-          className={
-            i < score ? "text-sm text-yellow-400" : "text-sm text-gray-300"
-          }
-        >
-          ★
-        </span>
-      ))}
-    </div>
-  );
-}
+import StarRating from "@/components/StarRating";
 
 export default function BookCard({ book }: { book: Book }) {
   return (
-    <Link href={`/books/${book.id}`} className="group block">
-      <div className="bg-card border-border overflow-hidden rounded-lg border transition-shadow hover:shadow-md">
+    <Link href={`/books/${book.id}`} className="group block cursor-pointer">
+      <div className="bg-card border-border overflow-hidden rounded-lg border transition-shadow hover:shadow-lg">
         {/* 표지 이미지 */}
         <div className="bg-muted relative aspect-[2/3] w-full">
           <Image
@@ -38,6 +16,10 @@ export default function BookCard({ book }: { book: Book }) {
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
             className="object-cover transition-transform group-hover:scale-105"
           />
+          {/* hover 오버레이 */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+            <span className="text-sm font-medium text-white">자세히 보기</span>
+          </div>
         </div>
 
         {/* 책 정보 */}

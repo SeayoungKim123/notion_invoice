@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js Starter Kit",
-  description: "Modern web development starter kit",
+  title: "Book Shelf",
+  description: "읽은 책을 소개합니다",
 };
 
 export default function RootLayout({

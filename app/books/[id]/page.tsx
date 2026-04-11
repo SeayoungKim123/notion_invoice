@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getBooks, getBookById } from "@/lib/notion";
+import StarRating from "@/components/StarRating";
 
 export const revalidate = 3600;
 
@@ -12,29 +13,6 @@ export async function generateStaticParams() {
 
 function isSafeUrl(url: string): boolean {
   return /^https?:\/\//i.test(url);
-}
-
-function StarRating({ rating }: { rating: string }) {
-  const match = rating.match(/(\d)/);
-  const score = match ? parseInt(match[1], 10) : 0;
-
-  if (score === 0) return null;
-
-  return (
-    <div className="flex items-center gap-1">
-      {Array.from({ length: 5 }, (_, i) => (
-        <span
-          key={i}
-          className={
-            i < score ? "text-xl text-yellow-400" : "text-xl text-gray-300"
-          }
-        >
-          ★
-        </span>
-      ))}
-      <span className="text-muted-foreground ml-1 text-sm">{score} / 5</span>
-    </div>
-  );
 }
 
 export default async function BookDetailPage({
@@ -50,13 +28,13 @@ export default async function BookDetailPage({
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-10 sm:py-12">
+    <main className="mx-auto max-w-3xl px-4 py-10 sm:py-12">
       {/* 뒤로 가기 */}
       <Link
         href="/"
-        className="text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1 text-sm transition-colors"
+        className="bg-muted text-foreground hover:bg-muted/70 mb-8 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors"
       >
-        ← 목록으로
+        ← 목록으로 돌아가기
       </Link>
 
       <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:gap-8">
@@ -99,7 +77,9 @@ export default async function BookDetailPage({
           </p>
 
           {/* 별점 */}
-          {book.rating && <StarRating rating={book.rating} />}
+          {book.rating && (
+            <StarRating rating={book.rating} size="lg" showScore />
+          )}
 
           {/* 읽은 날짜 */}
           {book.readDate && (

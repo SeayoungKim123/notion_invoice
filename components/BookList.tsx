@@ -38,6 +38,7 @@ export default function BookList({ books }: { books: Book[] }) {
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
+            aria-pressed={activeCategory === cat}
             className={[
               "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
               activeCategory === cat

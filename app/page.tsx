@@ -1,6 +1,7 @@
 import { getBooks } from "@/lib/notion";
 import type { Book } from "@/lib/notion";
 import BookList from "@/components/BookList";
+import BookStats from "@/components/BookStats";
 import ThemeToggle from "@/components/ThemeToggle";
 
 export const revalidate = 3600;
@@ -58,6 +59,9 @@ export default async function Home() {
             </p>
           </div>
         </div>
+
+        {/* 독서 통계 */}
+        <BookStats books={books} />
 
         {/* Book List with Category Filter */}
         <BookList books={books} />
